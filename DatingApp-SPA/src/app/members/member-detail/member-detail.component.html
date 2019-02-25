@@ -1,0 +1,78 @@
+<!-- ? (safe navigation operator) so that we overcome the undefined errors. 
+The Angular safe navigation operator (?.) is a fluent and convenient way to guard against null and undefined values in property paths.
+https://angular.io/guide/template-syntax#safe-navigation-operator -->
+<!-- {{}} - used in html to data bind TS/JS objects (declared in the ts file) -->
+<div class="container mt-4">
+  <div class="row">
+    <h1>{{user.knownAs}}'s Profile</h1>
+  </div>
+  <div class="row">
+    <!-- user's details -->
+    <div class="col-sm-4">
+      <div class="card">
+        <img class="card-img-top img-thumbnail"src="{{user.photoUrl || '../../assets/user.png'}}" alt="{{user.knownAs}}">
+        <div class="card-body">
+          <div>
+            <strong>Location:</strong>
+            <p>{{user.city}}, {{user.country}}</p>
+          </div>
+          <div>
+              <strong>Age:</strong>
+              <p>{{user.age}}</p>
+          </div>
+          <div>
+              <strong>Last Active:</strong>
+              <!-- https://www.npmjs.com/package/time-ago-pipe -->
+              <p>{{user.lastActive | timeAgo}}</p>
+          </div>
+          <div>
+              <strong>Member since:</strong>
+              <!-- A pipe takes in data as input and transforms it to a desired output. Here we use pipes to transform a created date into a human-friendly date. -->
+              <!-- https://angular.io/guide/pipes -->
+              <!-- https://angular.io/api/common/DatePipe#usage-notes -->
+              <p>{{user.created | date: 'mediumDate'}}</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <!-- https://getbootstrap.com/docs/4.0/utilities/flex/ -->
+          <div class="btn-group d-flex">
+            <button class="btn btn-primary w-100">Like</button>
+            <!-- the click event below is for opening up the message tab when we click on message button
+            https://valor-software.com/ngx-bootstrap/#/tabs#tabs-manual-select
+            The 3 here is the tab number of messages on the member-detail page i.e.
+            About is 0, Interests in 1, Photos is 2, Messages is 3-->
+            <button class="btn btn-success w-100" (click)="selectTab(3)">Message</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- user's info panel -->
+    <!-- the tabsModule part (aslso referred in app.module.ts) is an ngx bootstrap
+    class for tabs: https://valor-software.com/ngx-bootstrap/#/tabs -->
+    <div class="col-sm-8">
+      <div class="tab-panel">
+        <tabset class="member-tabset" #memberTabs>
+          <tab heading="About {{user?.knownAs}}">
+            <h4>Description</h4>
+            <p>{{user.introduction}}</p>
+            <h4>Looking For</h4>
+            <p>{{user.lookingFor}}</p>
+          </tab>
+          <tab heading="Interests">
+              <h4>Interests</h4>
+              <p>{{user.interests}}</p>
+          </tab>
+          <tab heading="Photos">
+            <!-- check following snippet from: https://www.npmjs.com/package/ngx-gallery -->
+              <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+          </tab>
+          <tab heading="Messages">
+            <!-- recipientID is an input property for child component member-messages -->
+              <app-member-messages [recipientID]="user.id"></app-member-messages>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</div>

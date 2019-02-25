@@ -1,0 +1,23 @@
+<div class="container mt-5"> <!-- mt-5 for margin top, bootstrap shorthand-->
+    <div *ngIf="!registerMode" style="text-align: center">
+      <h1>Find your match</h1>
+      <p class="lead">Come on in to view your matches... All you need to do is sign up!</p>
+      <div class="text-center">
+        <button class="btn btn-primary btn-lg mr-2" (click)="registerToggle()">Register</button>
+        <button class="btn btn-info btn-lg">Learn more</button>
+      </div>
+    </div>
+  
+    <div *ngIf="registerMode" class="container">
+      <div class="row justify-content-center">
+        <div class="col-4">
+          <!-- since we want the register as a child of home page -->
+          <!-- this is how we receive properties from parent to child -->
+          <!-- [] i.e. for eg: [valuesFromHome]="values", is used for input properties and () for output properties -->
+          <!-- the $event here in the cancelRegister part is just the false that the register component passes on cancel -->
+          <!-- the child's i.e. register component's event will be emitted to the parent i.e. home's cancelRegisterMode method -->
+          <app-register (cancelRegister)="cancelRegisterMode($event)"></app-register>
+        </div>
+      </div>
+    </div>
+  </div>

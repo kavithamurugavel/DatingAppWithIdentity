@@ -1,0 +1,75 @@
+<div class="text-center mt-3">
+    <h2>Your matches - {{pagination.totalItems}} found</h2>
+</div>
+
+<div class="container mt-3">
+    <form class="form-inline" #form="ngForm" (ngSubmit)="loadUsers()" novalidate>
+        <div class="form-group">
+          <label for="minAge">Age From</label>
+          <!-- type='number' here is a scrollable number field by bootstrap
+          https://v4-alpha.getbootstrap.com/components/forms/#textual-inputs - check Number in the list -->
+          <input type="number" class="form-control ml-1" style="width: 70px" id="minAge" 
+          [(ngModel)]="userParams.minAge" name="minAge">
+        </div>
+      
+        <div class="form-group px-2">
+          <label for="maxAge">Age To</label>
+          <input type="number" class="form-control ml-1" style="width: 70px" id="maxAge" 
+          [(ngModel)]="userParams.maxAge" name="maxAge">
+        </div>
+      
+        <div class="form-group px-2">
+          <label for="gender">Show: </label>
+          <select class="form-control ml-1" style="width: 130px" id="gender" 
+          [(ngModel)]="userParams.gender" name="gender">
+
+          <!-- displaying the genders. Value is the value that we return from this -->
+          <!-- Property binding value (in the DOM) to gender.value  
+          https://stackoverflow.com/questions/39112904/property-binding-vs-attribute-interpolation-->
+          <option *ngFor="let gender of genderList" [value]="gender.value">
+            {{gender.displayName}}
+          </option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-left:10px">Apply Filters</button>
+        <button type="button" class="btn btn-info" (click)="resetFilters()" style="margin-left:10px">Reset Filter</button>
+
+        <div class="col">
+          <!-- https://valor-software.com/ngx-bootstrap/#/buttons#radio-button -->
+            <div class="btn-group float-right">
+              <button type="button" name="orderBy" class="btn btn-primary"
+              [(ngModel)]="userParams.orderBy" (click)="loadUsers()" btnRadio="lastActive">Last Active</button>
+              <button type="button" name="orderBy" class="btn btn-primary" 
+              [(ngModel)]="userParams.orderBy" (click)="loadUsers()" btnRadio="created">Newest Members</button>
+            </div>
+        </div>
+      
+      </form>
+      <br>
+
+  <div class="row">
+    <!-- this means for large screens, 2 grid columns i.e. 6 elements will be displayed
+    in medium screens, 3 grid columns i.e. 4 elements displayed, and for small screens,
+    6 wide i.e. only 2 elements will be displayed. Shortcut to generate this snippet is 
+    div.col-lg-2.col-md-3.col-sm-6 and press tab. This is bootstrap related.
+    Read https://stackoverflow.com/questions/24175998/meaning-of-numbers-in-col-md-4-col-xs-1-col-lg-2-in-bootstrap for better explanation-->
+    <div *ngFor="let user of users" class="col-lg-2 col-md-3 col-sm-6">
+      <!-- child component member card; input property user is [user] -->
+      <app-member-card [user]="user"></app-member-card>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-center">
+  <!-- pagination markup: https://valor-software.com/ngx-bootstrap/#/pagination#custom-links-content -->
+  <!-- page changed event: https://valor-software.com/ngx-bootstrap/#/pagination#page-changed-event -->
+  <!-- boundary links is true here because we want the first and last pages to be disabled
+  when we cannot navigate to first (i.e. if we are already on the first page) and last pages (i.e. if we are already on the last page) -->
+  <pagination [boundaryLinks]="true" [totalItems]="pagination.totalItems"
+              [itemsPerPage]="pagination.itemsPerPage"
+              [(ngModel)]="pagination.currentPage"
+              (pageChanged)="pageChanged($event)"
+            previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+ 
+  </pagination>
+</div>

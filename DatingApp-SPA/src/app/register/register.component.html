@@ -1,0 +1,114 @@
+
+<!-- section 12 lecture 121: replaced #registerForm="ngForm" with formGroup here since we'll be dealing with reactive forms -->
+<!-- Right of the bat, we no longer declare a local variable but use the formGroup directive and set it the registerForm object we defined in the component. 
+  Throughout the form, we will reference the registerForm root object.-->
+<form [formGroup]="registerForm" (ngSubmit)="register()">
+    <h2 class="text-center text-primary">Sign Up</h2>
+    <hr>
+
+    <!-- form-group is a bootstrap feature. Check examples at: https://v4-alpha.getbootstrap.com/components/forms/ -->
+    <div class="form-group">
+        <label class="control-label" style="margin-right:10px">I am a: </label>
+        <!-- Use the .radio-inline class if you want the radio buttons to appear on the same line
+        https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp -->
+        <label class="radio-inline">
+          <input class="mr-3" type="radio" value="male" formControlName="gender">Male
+        </label>
+        <label class="radio-inline ml-3">
+          <input class="mr-3" type="radio" value="female" formControlName="gender">Female
+        </label>
+    </div>
+  
+    <div class="form-group">
+      <!-- section 12 lecture 121: removed 'required' and ngModel from below because we are going to validate in the component
+      as part of reactive forms -->
+      <!-- the foll. ngClass is for showing is-invalid class in the error state and when it is touched and moved away without entering username-->
+      <!-- here, the ngClass evaluates an expression. Check https://scotch.io/tutorials/the-many-ways-to-use-ngclass under
+      'ngClass Using Evaluated Expression' for more details. We are using ngClass to conditionally add a class to our div if the form is invalid -->
+      <input type="text" [ngClass]="{'is-invalid': registerForm.get('username').errors && registerForm.get
+    ('username').touched}"
+      class="form-control" formControlName="username" placeholder="Username">
+      <!-- invalid-feedback is a bootstrap feature that helps in validating forms: https://getbootstrap.com/docs/4.0/components/forms/ -->
+      <!-- before progressing further, read details about validation at https://scotch.io/tutorials/angular-2-form-validation#toc-angular-2-form-validation -->
+      <div class="invalid-feedback">Please choose a username</div>
+    </div>
+
+    <div class="form-group">
+      <!-- Rather than set an ngModel, we use the formControl directive to sync our input to the registerForm object. 
+        Notice that we are also setting the attribute we wish the corresponding input to sync with. -->
+        <input [ngClass]="{'is-invalid': registerForm.get('knownAs').errors && registerForm.get('knownAs').touched}" class="form-control"
+          placeholder="Known as" formControlName="knownAs">
+          <!-- The hasError method will tell us if a particular error exists -->
+          <!-- also we can use registerForm.controls['knownAs'] instead of registerForm.get('knownAs')-->
+        <div class="invalid-feedback" *ngIf="registerForm.get('knownAs').touched && registerForm.get('knownAs').hasError('required')">Known as is required</div>
+    </div>
+
+      <!-- we cannot use type="date" because it is not supported in all browsers. So we are
+      using datepicker from bootstrap: https://valor-software.com/ngx-bootstrap/#/datepicker. We are using bsConfig so that
+      we get the red theme for the date control - https://valor-software.com/ngx-bootstrap/#/datepicker#themes-->
+    <div class="form-group">
+        <input [ngClass]="{'is-invalid': registerForm.get('dateOfBirth').errors && registerForm.get('dateOfBirth').touched}" class="form-control"
+          placeholder="Date of Birth" formControlName="dateOfBirth" type="text" bsDatepicker [bsConfig]="bsConfig">
+        <div class="invalid-feedback" *ngIf="registerForm.get('dateOfBirth').touched && registerForm.get('dateOfBirth').hasError('required')">Date of Birth is required</div>
+    </div>
+
+    <!-- The following snippet is for demo on parent -> child value passing using Input
+      <div class="form-group">
+      <label for="favoriteValue">What is your favorite value?</label>
+      <select class="form-control" id="favoriteValue">
+        <option *ngFor="let value of valuesFromHome" [value]="value">{{value.name}}</option>
+      </select>
+    </div> -->
+
+    <div class="form-group">
+      <input [ngClass]="{'is-invalid': registerForm.get('city').errors && registerForm.get('city').touched}" class="form-control"
+        placeholder="City" formControlName="city">
+      <div class="invalid-feedback" *ngIf="registerForm.get('city').touched && registerForm.get('city').hasError('required')">City is required</div>
+    </div>
+  
+    <div class="form-group">
+      <input [ngClass]="{'is-invalid': registerForm.get('country').errors && registerForm.get('country').touched}" class="form-control"
+        placeholder="Country" formControlName="country">
+      <div class="invalid-feedback" *ngIf="registerForm.get('country').touched && registerForm.get('country').hasError('required')">Country is required</div>
+    </div>
+  
+    <div class="form-group">
+      <input type="password" [ngClass]="{'is-invalid': registerForm.get('password').errors && registerForm.get
+      ('password').touched}"
+      class="form-control" formControlName="password" placeholder="Password">
+      
+      <!-- foll. are the 3 validations for password. Note: hasError param should have only lowercase letters-->
+      <div class="invalid-feedback" *ngIf="registerForm.get('password').hasError('required') 
+      && registerForm.get ('password').touched">Password is required</div>
+      <div class="invalid-feedback" *ngIf="registerForm.get('password').hasError('minlength') 
+      && registerForm.get ('password').touched">Password must be at least 4 characters</div>
+      <div class="invalid-feedback" *ngIf="registerForm.get('password').hasError('maxlength') 
+      && registerForm.get ('password').touched">Password cannot exceed 8 characters</div>
+    </div>
+
+    <div class="form-group">
+        <input type="password" [ngClass]="{'is-invalid': registerForm.get('confirmPassword').errors 
+        && registerForm.get('confirmPassword').touched
+        || registerForm.get('confirmPassword').touched
+        && registerForm.hasError('mismatch')}"
+        class="form-control" formControlName="confirmPassword" placeholder="Confirm Password">
+
+        <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword').hasError('required') 
+        && registerForm.get('confirmPassword').touched">Password is required</div>
+        
+        <!-- The hasError method can work with built in validators and custom validators as well 
+        Here mismatch is the custom validator that we defined in passwordMatchValidator()
+        https://angular.io/guide/form-validation#cross-field-validation -->
+        <div class="invalid-feedback" *ngIf="registerForm.hasError('mismatch') 
+        && registerForm.get('confirmPassword').touched">Passwords must match</div>
+    </div>
+  
+    <div class="form-group text-center">
+      <button class="btn btn-success" [disabled]="!registerForm.valid" type="submit">Register</button>
+      <button class="btn btn-default" type="button" (click)="cancel()">Cancel</button>
+    </div>
+    
+  </form>
+
+  <!-- <p>Form value: {{registerForm.value | json}}</p>
+  <p>Form status: {{registerForm.status | json}}</p> -->

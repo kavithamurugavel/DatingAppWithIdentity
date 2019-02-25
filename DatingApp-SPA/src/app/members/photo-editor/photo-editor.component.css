@@ -1,0 +1,29 @@
+img.img-thumbnail {
+    height: 100px;
+    /* important overrides bootstrap/any other styling 
+    https://stackoverflow.com/questions/9245353/what-does-important-mean-in-css*/
+    min-width: 100px !important; 
+    margin-bottom: 2px;
+}
+
+.nv-file-over {
+    border: dotted 3px red;
+}
+
+input[type=file] {
+    color: transparent;
+}
+
+.not-approved {
+    opacity: 0.2;
+}
+
+.img-wrapper {
+    position: relative;
+}
+
+/* for img-text below to be absolute, the container i.e. the img-wrapper should be relative */
+.img-text {
+    position: absolute;
+    bottom: 30%;
+}

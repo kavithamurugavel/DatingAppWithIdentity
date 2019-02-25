@@ -1,0 +1,65 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* importing our custom css files here directly */
+@import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+@import '../node_modules/bootswatch/dist/united/bootstrap.min.css';
+@import '../node_modules/font-awesome/css/font-awesome.min.css';
+@import '../node_modules/alertifyjs/build/css/alertify.min.css';
+@import '../node_modules/alertifyjs/build/css/themes/bootstrap.min.css';
+/* for date options we are using datepicker from bootstrap. Sec 12 Lec 127
+https://valor-software.com/ngx-bootstrap/#/datepicker */
+@import '../node_modules/ngx-bootstrap/datepicker/bs-datepicker.css';
+
+/*styling for tab panel Lecture 89, Section 9
+instead of using custom class for tabs in a particular component (as seen in https://valor-software.com/ngx-bootstrap/#/tabs#tabs-custom-class) 
+we are writing the following globally more in keeping with our requirements*/
+
+.tab-panel {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  /* > in css - The > means a child element - it is the child selector. That is, directly / immediately nested after. 
+  For eg: the "li > ul" syntax specifies that the ul must be a child of li. 
+  "li ul" instead says that the the styled ul is descendant of li, no matter how many levels below. 
+  https://stackoverflow.com/questions/8787134/when-to-use-sign-in-css */
+  .nav-tabs > li.open, .member-tabset > .nav-tabs > li:hover {
+    border-bottom: 4px solid #fbcdcf;
+  }
+  
+  .member-tabset > .nav-tabs > li.open > a, .member-tabset > .nav-tabs > li:hover > a {
+    border: 0;
+    background: none !important;
+    color: #333333;
+  }
+  
+  .member-tabset > .nav-tabs > li.open > a > i, .member-tabset > .nav-tabs > li:hover > a > i {
+    color: #a6a6a6;
+  }
+  
+  .member-tabset > .nav-tabs > li.open .dropdown-menu, .member-tabset > .nav-tabs > li:hover .dropdown-menu {
+    margin-top: 0px;
+  }
+  
+  .member-tabset > .nav-tabs > li.active {
+    border-bottom: 4px solid #E95420;
+    position: relative;
+  }
+  
+  .member-tabset > .nav-tabs > li.active > a {
+    border: 0 !important;
+    color: #333333;
+  }
+  
+  .member-tabset > .nav-tabs > li.active > a > i {
+    color: #404040;
+  }
+  
+  .member-tabset > .tab-content {
+    margin-top: -3px;
+    background-color: #fff;
+    border: 0;
+    border-top: 1px solid #eee;
+    padding: 15px 0;
+  }

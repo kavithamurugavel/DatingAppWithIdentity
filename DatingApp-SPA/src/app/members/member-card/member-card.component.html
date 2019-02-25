@@ -1,0 +1,29 @@
+<div class="card mb-4">
+  <div class="card-img-wrapper">
+    <!-- card-img-top is a bootstrap class -->
+    <!-- check the card part of the link: https://getbootstrap.com/docs/4.1/components/card/ -->
+    <img class="card-img-top" src="{{user.photoUrl || '../../../assets/user.png'}}" alt="{{user.knownAs}}">
+    <ul class="list-inline member-icons animate text-center">
+      <li class="list-inline-item">
+        <!-- route link used to route for the specific member id -->
+        <button class="btn btn-primary" 
+        [routerLink]="['/members/', user.id]"><i class="fa fa-user"></i></button>
+        
+        <button class="btn btn-primary" (click)="sendLike(user.id)"><i class="fa fa-heart"></i></button>
+        
+        <!-- the following routerLink and queryParams is to take the user to the messages tab of the 
+        member-detail page directly when we click on the envelope icon on the member-card component. 
+        https://valor-software.com/ngx-bootstrap/#/tabs#tabs-manual-select. For more comments on the flow
+        of queryParams, check Important points.txt -->
+        <button class="btn btn-primary" [routerLink]="['/members/', user.id]" [queryParams]="{tab: 3}"><i class="fa fa-envelope"></i></button>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body p-1">
+    <h6 class="card-title text-center mb-1">
+      <!-- fa-user icon is from font awesome -->
+      <i class="fa fa-user"></i> {{user.knownAs}}, {{user.age}}
+    </h6>
+    <p class="card-text text-muted text-center">{{user.city}}</p>
+  </div>
+</div>

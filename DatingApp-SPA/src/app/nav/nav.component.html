@@ -1,0 +1,64 @@
+<!-- Code obtained and edited/condensed from navbar element (right click -> Inspect on nav bar) at https://getbootstrap.com/docs/4.1/examples/jumbotron/ -->
+<!-- also https://getbootstrap.com/docs/4.1/components/dropdowns/ -->
+<nav class="navbar navbar-expand-md navbar-dark bg-primary">
+  <div class="container">
+      <a class="navbar-brand" [routerLink]="['/home']">Dating App</a>
+
+      <!-- showing the matches, lists and messages only if the user is logged in -->
+      <ul *ngIf="loggedIn()" class="navbar-nav mr-auto">
+        <!--'' a-routerLink' is the directive we need to scaffold the router code below, and routerLink=active makes the selected
+         link highlighted when they are active/selected. Another definition: its the directive for adding/removing classes from an HTML element 
+         when an associated routerLink contained on or inside the element becomes active/inactive. - Section 7 Lecture 61 -->
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="['/members']">Matches</a>
+        </li>
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="['/lists']" >Lists</a>
+        </li>
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="['/messages']">Messages</a>
+        </li>
+        <li *appHasRole="['Admin', 'Moderator']" class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="['/admin']">Admin</a>
+        </li>
+      </ul>
+    
+      <!-- dropdown styling from https://valor-software.com/ngx-bootstrap/old/3.0.1/#/dropdowns
+      under 'Trigger by tag'. Section 6 Lecture 56 -->
+      <div *ngIf="loggedIn()" class="dropdown" dropdown>
+        <span class="mr-1">
+          <img src="{{photoUrl || '../../assets/user.png'}}" alt="">
+        </span>
+        <a class="dropdown-toggle text-light" dropdownToggle>
+          <!-- the unique_name property from the decoded token gives the username 
+          the ? below means that the unique_name is optional, so that the 'undefined' errors can be prevented
+          also titlecase means something like bob will become Bob on the page-->
+          Welcome {{authService.decodedToken?.unique_name | titlecase}}
+        </a>
+      
+        <!-- fa-user and fa-sign-out icons are from font awesome -->
+        <div class="dropdown-menu mt-3" *dropdownMenu>
+          <a class="dropdown-item" [routerLink]="['/member/edit']">
+            <i class ="fa fa-user"></i>Edit Profile</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" (click)="logout()"><i class ="fa fa-sign-out"></i>Logout</a>
+        </div>
+      </div>
+    
+      <!-- # - indicating that it is an angular template form -->
+      <!-- ngModel is used for two way binding between template and component ie. 
+      binds the value of HTML controls (input, select, textarea) to application data.
+      https://www.w3schools.com/angular/angular_model.asp -->
+      <!-- ngSubmit we are doing at form level rather than the submit button level -->
+      <!-- required keyword in the input tag is to let angular know that the field is required -->
+      <form *ngIf="!loggedIn()" #loginForm="ngForm" class="form-inline my-2 my-lg-0" (ngSubmit)="login()">
+        <input class="form-control mr-sm-2" type="text" name="username" 
+        placeholder="Username" required [(ngModel)]="model.username">
+        <input class="form-control mr-sm-2" type="password" name="password" 
+        placeholder="Password" required [(ngModel)]="model.password">
+        
+        <!-- disable button if form is not in valid state i.e. username and/or password are empty -->
+        <button [disabled]="!loginForm.valid" class="btn btn-success my-2 my-sm-0" type="submit">Login</button>
+      </form>
+  </div>
+</nav>

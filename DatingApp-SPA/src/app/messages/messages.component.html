@@ -1,0 +1,70 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="btn-group">
+      <button class="btn btn-primary" [(ngModel)]="messageContainer" btnRadio="Unread" (click)="loadMessages()">
+        <i class="fa fa-envelope"></i> Unread
+      </button>
+      <button class="btn btn-primary" [(ngModel)]="messageContainer" btnRadio="Inbox" (click)="loadMessages()">
+        <i class="fa fa-envelope-open"></i> Inbox
+      </button>
+      <button class="btn btn-primary" [(ngModel)]="messageContainer" btnRadio="Outbox" (click)="loadMessages()">
+        <i class="fa fa-paper-plane"></i> Outbox
+      </button>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="messages.length == 0">
+    <h3>No messages</h3>
+  </div>
+
+  <div class="row" *ngIf="messages.length > 0">
+    <table class="table table-hover" style="cursor: pointer">
+      <tr>
+        <th style="width: 40%">Message</th>
+        <th style="width: 20%">From/To</th>
+        <th style="width: 20%">Sent/Received</th>
+        <th style="width: 20%"></th>
+      </tr>
+      <!-- Query parameters in Angular allow for passing optional parameters across any route in the application. 
+        Query params are different from regular route parameters, which are only available on one route and are not optional (e.g.: /product/:id). 
+        adding queryParams here to add a param named 'tab' to the query string, which in turn we
+        can access to go from the Messages page directly to the Messages tab in the user's profile
+        Sec 16 Lec 167 -->
+      <tr *ngFor="let message of messages" [routerLink]="['/members', 
+        messageContainer == 'Outbox' ? message.recipientID : message.senderID]"
+        [queryParams]="{tab: 3}">
+        <td>{{message.content}}</td>
+        <td>
+          <div *ngIf="messageContainer != 'Outbox'">
+                <img src={{message?.senderPhotoUrl}} class="img-circle rounded-circle mr-1">
+                <strong>{{message.senderKnownAs}}</strong>
+          </div>
+          <div *ngIf="messageContainer == 'Outbox'">
+                <img src={{message?.recipientPhotoUrl}} class="img-circle rounded-circle mr-1">
+                <strong>{{message.recipientKnownAs}}</strong>
+          </div>
+        </td>
+        <td>{{message.messageSent | timeAgo}}</td>
+        <td>
+          <!-- the stop propogation is to stop the redirection to the members page (from the routerLink above)
+          whenever we click on Delete button. That is, it stops event bubbling and event capturing.
+          Event bubbling allows a single handler on a parent element to listen to events fired by any of its children.
+          Use stopPropagation to avoid double event handler invocation -->
+          <button class="btn btn-danger" (click)="$event.stopPropagation()" (click)="deleteMessage(message.id)">Delete</button>
+        </td>
+      </tr>
+    </table>
+
+  </div>
+
+</div>
+
+<div class="d-flex justify-content-center">
+    <pagination [boundaryLinks]="true" 
+                [totalItems]="pagination.totalItems"
+                [itemsPerPage]="pagination.itemsPerPage"
+                [(ngModel)]="pagination.currentPage"
+                (pageChanged)="pageChanged($event)"
+              previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+  </pagination>
+  </div>
