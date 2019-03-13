@@ -41,6 +41,8 @@ export class UserManagementComponent implements OnInit {
         // filtering out any of the role names that are not checked
         // the spread operator ... spreads the values into a new array and assign role names
         // (.map gets just the names of the roles)
+        // https://zendev.com/2018/05/09/understanding-spread-operator-in-javascript.html
+        // https://medium.com/poka-techblog/simplify-your-javascript-use-map-reduce-and-filter-bd02c593cc2d
         roleNames: [...values.filter(el => el.checked === true).map(el => el.name)]
       };
       if (rolesToUpdate) {
@@ -69,6 +71,7 @@ export class UserManagementComponent implements OnInit {
       for (let j = 0; j < userRoles.length; j++) {
         if (availableRoles[i].name === userRoles[j]) {
           isMatch = true;
+          // 'checked' here is just an on-the-fly property created since availableRoles is of type any
           availableRoles[i].checked = true;
           roles.push(availableRoles[i]);
           break;

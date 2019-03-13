@@ -10,6 +10,8 @@ export class HasRoleDirective implements OnInit {
 
   // the view container could be a component or a template. We are using it as a template
   // when we use this directive with an *, it transforms the element into a template like *<ng-template>
+  // https://angular.io/api/core/ViewContainerRef
+  // https://angular.io/api/core/TemplateRef
   constructor(private viewContainerRef: ViewContainerRef, private templateRef: TemplateRef<any>,
     private authService: AuthService) { }
 
@@ -26,6 +28,8 @@ export class HasRoleDirective implements OnInit {
         if (!this.isVisible) {
           this.isVisible = true;
           // templateRef refers to element that we are applying the structural directive to
+          // This instantiates an embedded view and inserts it into this container.
+          // https://angular.io/api/core/ViewContainerRef#createembeddedview
           this.viewContainerRef.createEmbeddedView(this.templateRef);
         }
       } else {

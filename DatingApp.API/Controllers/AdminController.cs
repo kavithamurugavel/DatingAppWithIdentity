@@ -19,6 +19,8 @@ namespace DatingApp.API.Controllers
     public class AdminController: ControllerBase
     {
         private readonly DataContext _context;
+        // https://docs.microsoft.com/en-us/previous-versions/aspnet/dn468199(v%3dvs.108)
+        // explanations of all the userManager methods used in the below code can be also found in the link above
         private readonly UserManager<User> _userManager;
         private readonly IOptions<CloudinarySettings> _cloudinaryConfig;
         private Cloudinary _cloudinary;
@@ -40,10 +42,12 @@ namespace DatingApp.API.Controllers
             _cloudinary = new Cloudinary(acc);
         }
         // Policy is defined in Startup
+        // https://docs.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-2.2#policy-based-role-checks
         [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("usersWithRoles")]
         public async Task<IActionResult> GetUsersWithRoles()
         {
+            // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/query-syntax-and-method-syntax-in-linq
 
             var userList = await (from user in _context.Users orderby user.UserName
                             select new {
@@ -72,6 +76,7 @@ namespace DatingApp.API.Controllers
             // ?? is null coalescing operator. 
             // Equivalent to selectedRoles != null ? selectedRoles : new string[] {}
             // if the user is removed from all roles, then we use the new string[]
+            // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/null-coalescing-operator
             selectedRoles = selectedRoles ?? new string[] {};
 
             // to add all the roles that the user is not already a member of (which is why we use Except)

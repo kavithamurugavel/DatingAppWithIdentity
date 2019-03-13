@@ -35,6 +35,10 @@ export const appRoutes: Routes = [
                 resolve: {user: MemberEditResolver}, canDeactivate: [PreventUnsavedChanges]},
             {path: 'messages', component: MessagesComponent, resolve: {messages: MessagesResolver}},
             {path: 'lists', component: ListsComponent, resolve: {users: ListsResolver}},
+            // The data property in the third route is a place to store arbitrary data associated with this specific route.
+            // The data property is accessible within each activated route. Use it to store items such as page titles,
+            // breadcrumb text, and other read-only, static data.
+            // https://angular.io/guide/router#configuration
             {path: 'admin', component: AdminPanelComponent, data: {roles: ['Admin', 'Moderator']}},
         ]
     },

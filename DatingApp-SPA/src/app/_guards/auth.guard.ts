@@ -17,6 +17,7 @@ export class AuthGuard implements CanActivate {
   canActivate(next: ActivatedRouteSnapshot): boolean {
     // getting roles from the data property. Because auth guard is protecting child routes,
     // we mention firstChild. The 'roles' here correspond to the ones in routes.ts
+    // https://angular.io/api/router/ActivatedRouteSnapshot#properties
     const roles = next.firstChild.data['roles'] as Array<string>;
 
     if (roles) {

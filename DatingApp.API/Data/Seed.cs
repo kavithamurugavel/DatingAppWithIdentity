@@ -11,7 +11,10 @@ namespace DatingApp.API.Data
 {
     public class Seed
     {
+        // https://docs.microsoft.com/en-us/previous-versions/aspnet/dn468199(v%3dvs.108)
         private readonly UserManager<User> _userManager;
+        // https://docs.microsoft.com/en-us/previous-versions/aspnet/dn468201(v%3Dvs.108)
+        // explanations of all the userManager and roleManager methods used in the below code can be also found in the links above
         private readonly RoleManager<Role> _roleManager;
         public Seed(UserManager<User> userManager, RoleManager<Role> roleManager)
         {
@@ -47,6 +50,8 @@ namespace DatingApp.API.Data
                     // the initial photos that we are seeding are approved. Only subsequent photos should go thru approval
                     user.Photos.SingleOrDefault().IsApproved = true;
                     // we use Wait for the async (alternative to specifying method as async and awaiting the foll.line)
+                    // Wait will synchronously block until the task completes. So the current thread is literally blocked waiting for the task to complete.
+                    // https://stackoverflow.com/questions/13140523/await-vs-task-wait-deadlock
                     _userManager.CreateAsync(user, "password").Wait();
                     _userManager.AddToRoleAsync(user, "Member").Wait();
                 }
@@ -56,6 +61,8 @@ namespace DatingApp.API.Data
                     UserName = "Admin"
                 };
 
+                // represents the result of an identity operation
+                // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.identityresult?view=aspnetcore-2.2
                 IdentityResult result = _userManager.CreateAsync(adminUser, "password").Result;
 
                 if(result.Succeeded)

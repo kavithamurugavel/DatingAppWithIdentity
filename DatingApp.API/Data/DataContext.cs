@@ -5,6 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DatingApp.API.Data
 {
+    // Uses the built-in Identity types except with custom User and Role types
+    // The key type is defined by TKey
+    // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-2.2#the-identity-model
+    // (check under Model generic types -> IdentityDbContext example -> 3rd option)
     public class DataContext: IdentityDbContext<User, Role, int, 
     IdentityUserClaim<int>, UserRole, IdentityUserLogin<int>, 
     IdentityRoleClaim<int>, IdentityUserToken<int>>
@@ -27,15 +31,20 @@ namespace DatingApp.API.Data
             base.OnModelCreating(builder);
 
             // config for Identity 
+            // see all OnModelCreating examples in https://docs.microsoft.com/en-us/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-2.2#customize-the-model
+            // starting from 'Add navigation properties'
             builder.Entity<UserRole>(userRole => 
             {
+                // composite Primary Key
                 userRole.HasKey(ur => new {ur.UserId, ur.RoleId});
-
+                
+                // Each Role can have many entries in the UserRole join table
                 userRole.HasOne(ur => ur.Role)
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
 
+                // Each User can have many entries in the UserRole join table
                 userRole.HasOne(ur => ur.User)
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.UserId)

@@ -9,7 +9,11 @@
 <div class="modal-body">
   <!-- since we are going to have a submit button outside of this area, we are giving id -->
   <!-- the [disabled] part down below is written so that admin doesn't accidentally remove
-  themselves from the admin role -->
+  themselves from the admin role.
+  The (change) event notifies you about a change happening in an input field. 
+  Since your inner component is not a native Angular component, you have to specifiy the event emitter yourself 
+  https://stackoverflow.com/questions/38227838/what-is-change-event-in-angular-2 
+  https://stackoverflow.com/questions/35944749/what-is-the-difference-between-parentheses-brackets-and-asterisks-in-angular2-->
   <form #rolesForm="ngForm" id="rolesForm">
     <div class="form-check" *ngFor="let role of roles">
       <input type="checkbox" 

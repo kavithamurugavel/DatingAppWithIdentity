@@ -60,6 +60,8 @@ namespace DatingApp.API
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             //------------ Identity based configurations-----------------
+            // AddIdentityCore: Adds and configures the identity system for the specified User type.
+            // https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.identityservicecollectionextensions.addidentitycore?view=aspnetcore-2.2
             // We are choosing AddIdentityCore over AddIdentity here. This is because AddIdentity is more pro-MVC .Net Core Project
             // i.e. for eg: it has provisions for cookie based authentication (We use JWT Token authentication), its own redirects to other pages in case of
             // bad login (based on Razor view logic of MVC). Since we are not using Razor views (we use Angular), we go with AddIdentityCore.
@@ -74,14 +76,19 @@ namespace DatingApp.API
             });
 
             // we do the foll. to query the users and their roles
-
+            // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.identitybuilder.-ctor?view=aspnetcore-2.2
+            // the first two params are the types used for users and roles, and the 3rd is the The IServiceCollection to attach to.
             builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
+            // AddEntityFrameworkStores - Adds an Entity Framework implementation of identity information stores.
+            // https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.identityentityframeworkbuilderextensions.addentityframeworkstores?view=aspnetcore-2.2
             // we are basically telling Identity that we are going to use EntityFramework as our store
-            // this will then store all our user classes in our database (the tables created can be seen during migration)
+            // this will then store all our user classes in our database (the tables created can be seen during migration) using the DataContext
             builder.AddEntityFrameworkStores<DataContext>();
 
             // we have to explicitly configure the following because we are using AddIdentityCore instead of AddIdentity
             // (which already has these defined by default) 
+            // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.identitybuilder?view=aspnetcore-2.2
+            // above link has links to the foll. 3 methods
             builder.AddRoleValidator<RoleValidator<Role>>();
             builder.AddRoleManager<RoleManager<Role>>();
             builder.AddSignInManager<SignInManager<User>>();
@@ -101,21 +108,26 @@ namespace DatingApp.API
                         };
                     });
 
+            // https://docs.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-2.2#policy-based-role-checks
             services.AddAuthorization(options => {
                 options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
                 options.AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderator"));
                 options.AddPolicy("VIPOnly", policy => policy.RequireRole("VIP"));
             });
-
-
-            // adding an AuthorizationFilter so that every request is authenticated (instead of using Authorize
-            // data annotation in every controller i.e. for us, we can remove the annotation from the User, Photos and Message controllers)
+            
             services.AddMvc(options => 
             {
+                // adding an AuthorizationFilter so that every request is authenticated (instead of using Authorize
+                // data annotation in every controller i.e. for us, we can remove the annotation from the User, Photos and Message controllers)
+                // also means that, all controller actions which are not marked with [AllowAnonymous] 
+                // will require the user is authenticated with the default authentication scheme.
+                // https://joonasw.net/view/apply-authz-by-default
+                // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authorization.authorizationpolicybuilder?view=aspnetcore-2.2
                 var policy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
 
+                // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.authorization.authorizefilter?view=aspnetcore-2.2
                 options.Filters.Add(new AuthorizeFilter(policy));
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)

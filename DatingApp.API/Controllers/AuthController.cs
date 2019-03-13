@@ -26,6 +26,8 @@ namespace DatingApp.API.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        
+        // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.signinmanager-1?view=aspnetcore-2.2
         private readonly SignInManager<User> _signInManager;
 
         public AuthController(IConfiguration configuration, IMapper mapper,
@@ -63,6 +65,7 @@ namespace DatingApp.API.Controllers
         {
             var user = await _userManager.FindByNameAsync(userForLoginDTO.Username);
 
+            // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.signinmanager-1.checkpasswordsigninasync?view=aspnetcore-2.2#Microsoft_AspNetCore_Identity_SignInManager_1_CheckPasswordSignInAsync__0_System_String_System_Boolean_
             var result = await _signInManager.CheckPasswordSignInAsync(user, userForLoginDTO.Password, false);
 
             if(result.Succeeded)
@@ -85,6 +88,8 @@ namespace DatingApp.API.Controllers
             return Unauthorized();
         }
 
+        // https://stackoverflow.com/questions/40281050/jwt-authentication-for-asp-net-web-api/
+        // http://www.decatechlabs.com/secure-webapi-using-jwt under ' Generating the JWT Token  Web Api C#'
         private async Task<string> GenerateJwtToken(User user)
         {
             // token to contain two claims
@@ -107,14 +112,17 @@ namespace DatingApp.API.Controllers
             // making sure that the token that comes back from client is a valid token, we need to sign it
             // key to sign the token, which will be hashed
             // also we have to store this key in appsettings, which is why we need the configuration/appsettings part
+            //https://docs.microsoft.com/en-us/dotnet/api/microsoft.identitymodel.tokens.symmetricsecuritykey?view=azure-dotnet
             var key = new SymmetricSecurityKey(Encoding.UTF8
             .GetBytes(_configuration.GetSection("AppSettings:Token").Value));
 
             // signing credentials with the key created above
             // encrypting the key with SHA512
+            // https://docs.microsoft.com/en-us/dotnet/api/microsoft.identitymodel.tokens.signingcredentials?view=azure-dotnet
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             // creating a security token descriptor, which contain claims, expiry date of token and signing credentials
+            // https://docs.microsoft.com/en-us/dotnet/api/system.identitymodel.tokens.securitytokendescriptor?redirectedfrom=MSDN&view=netframework-4.7.2
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
@@ -122,10 +130,13 @@ namespace DatingApp.API.Controllers
                 SigningCredentials = creds
             };
 
+            // https://docs.microsoft.com/en-us/previous-versions/visualstudio/dn464181(v%3Dvs.114)
             var tokenHandler = new JwtSecurityTokenHandler();
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
+            // https://docs.microsoft.com/en-us/dotnet/api/system.identitymodel.tokens.securitytokenhandler.writetoken?view=netframework-4.7.2
+            // WriteToken serializes a token and returns it as a string
             return tokenHandler.WriteToken(token);
         }
     }

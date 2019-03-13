@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DatingApp.API.Models
 {
+    //Each User can have many associated Roles, and each Role can be associated with many Users. 
+    // This is a many-to-many relationship that requires a join table in the database. 
+    // The join table is represented by the UserRole entity.
+    // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.entityframeworkcore.identityuser-1?view=aspnetcore-1.1
     public class User : IdentityUser<int>
     {
         // the properties like ID, Username, Password salt and hash are already defined in 
